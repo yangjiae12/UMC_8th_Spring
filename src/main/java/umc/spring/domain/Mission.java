@@ -21,7 +21,6 @@ public class Mission extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private Integer reward;
 
     private LocalDate deadline;
