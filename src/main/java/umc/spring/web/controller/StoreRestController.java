@@ -1,5 +1,6 @@
 package umc.spring.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,12 @@ import umc.spring.web.dto.StoreResponseDTO;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stores")
+@Tag(name = "가게 API", description = "가게 관련 요청 처리")
 public class StoreRestController {
 
     private final StoreCommandService storeCommandService;
 
-    @PostMapping
+    @PostMapping("/add")
     public ApiResponse<StoreResponseDTO.CreateResultDTO> create(@RequestBody @Valid StoreRequestDTO.CreateStore request) {
         Store store = storeCommandService.createStore(request);
         return ApiResponse.onSuccess(StoreConverter.toCreateResultDTO(store));

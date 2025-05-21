@@ -1,5 +1,6 @@
 package umc.spring.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,12 @@ import umc.spring.web.dto.MissionResponseDTO;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/missions")
+@Tag(name = "미션 API", description = "미션 관련 요청 처리")
 public class MissionRestController {
 
     private final MissionCommandService missionCommandService;
 
-    @PostMapping
+    @PostMapping("/add")
     public ApiResponse<MissionResponseDTO.CreateResultDTO> create(@RequestBody @Valid MissionRequestDTO.CreateMission request) {
         Mission mission = missionCommandService.createMission(request);
         return ApiResponse.onSuccess(MissionConverter.toCreateResultDTO(mission));
