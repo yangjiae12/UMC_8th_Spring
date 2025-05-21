@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import umc.spring.apiPayload.code.status.ErrorStatus;
 import umc.spring.repository.food.FoodCategoryRepository;
+import umc.spring.service.food.FoodCategoryService;
 import umc.spring.validation.annotation.ExistCategories;
 
 import java.util.List;
@@ -14,24 +15,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoriesExistValidator implements ConstraintValidator<ExistCategories, List<Long>> {
 
-    private final FoodCategoryRepository foodCategoryRepository;
-
-    @Override
-    public void initialize(ExistCategories constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-    }
+    private final FoodCategoryService foodCategoryService;
 
     @Override
     public boolean isValid(List<Long> values, ConstraintValidatorContext context) {
-        boolean isValid = values.stream()
-                .allMatch(value -> foodCategoryRepository.existsById(value));
+        if (values == null || values.isEmpty()) {
+            return true; // 아무 것도 선택하지 않은 것은 유효 처리
+        }
+
+        boolean isValid = foodCategoryService.doAllCategoriesExist(values);
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(ErrorStatus.FOOD_CATEGORY_NOT_FOUND.toString()).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate("유효하지 않은 음식 카테고리가 포함되어 있습니다.")
+                    .addConstraintViolation();
         }
 
         return isValid;
-
     }
 }
