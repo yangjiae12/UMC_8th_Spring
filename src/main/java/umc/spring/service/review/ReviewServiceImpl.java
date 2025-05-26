@@ -47,4 +47,12 @@ public class ReviewServiceImpl implements ReviewService {
         Page<Review> StorePage = reviewRepository.findAllByStore(store, PageRequest.of(page, 10));
         return StorePage;
     }
+
+    @Override
+    public Page<Review> getReviewsByMember(Long memberId, Integer page) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member 값이 없습니다."));
+        PageRequest pageable = PageRequest.of(page - 1, 10);
+        return reviewRepository.findAllByMember(member, pageable);
+    }
 }

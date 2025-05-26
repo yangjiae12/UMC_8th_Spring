@@ -44,4 +44,27 @@ public class ReviewResponseDTO {
         LocalDate createdAt;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberReviewPreviewDTO {
+        private String storeName;
+        private Float score;
+        private String body;
+        private LocalDate createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberReviewPreviewListDTO {
+        private List<MemberReviewPreviewDTO> reviewList;
+        private Integer listSize;
+        private Integer totalPage;
+        private Integer totalElements;
+        private Boolean isFirst;
+        private Boolean isLast;
+    }
 }

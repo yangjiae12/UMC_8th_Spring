@@ -3,6 +3,7 @@ package umc.spring.web.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -15,6 +16,7 @@ import umc.spring.apiPayload.ApiResponse;
 import umc.spring.converter.ReviewConverter;
 import umc.spring.domain.Review;
 import umc.spring.service.review.ReviewService;
+import umc.spring.validation.annotation.ExistPage;
 import umc.spring.validation.annotation.ExistStore;
 import umc.spring.web.dto.ReviewRequestDTO;
 import umc.spring.web.dto.ReviewResponseDTO;
@@ -47,5 +49,25 @@ public class ReviewRestController {
     public ApiResponse<ReviewResponseDTO.ReviewPreviewListDTO> getReviewList(@ExistStore @PathVariable(name = "storeId") Long storeId,@RequestParam(name = "page") Integer page){
         Page<Review> reviewList = reviewService.getReviewList(storeId, page);
         return ApiResponse.onSuccess(ReviewConverter.reviewPreviewListDTO(reviewList));
+    }
+
+    @GetMapping("/members/{memberId}/reviews")
+    @Operation(summary = "내가 작성한 리뷰 목록 조회 API", description = "회원이 작성한 리뷰들을 10개씩 페이징하여 조회합니다. page는 1부터 시작합니다.")
+    @Parameters({
+            @Parameter(name = "memberId", in = ParameterIn.PATH, description = "회원 ID, path variable 입니다"),
+            @Parameter(name = "page", in = ParameterIn.QUERY, description = "조회할 페이지 번호 (1부터 시작)")
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+    })
+    public ApiResponse<ReviewResponseDTO.MemberReviewPreviewListDTO> getMyReviews(
+            @PathVariable(name = "memberId") Long memberId,
+            @ExistPage @RequestParam("page") Integer page) {
+
+        Page<Review> reviews = reviewService.getReviewsByMember(memberId, page);
+        return ApiResponse.onSuccess(ReviewConverter.toMemberReviewPreviewListDTO(reviews));
     }
 }
