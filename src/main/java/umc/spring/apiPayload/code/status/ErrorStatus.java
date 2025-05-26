@@ -24,6 +24,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     FOOD_CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "FOOD4001", "음식 카테고리가 없습니다"),
 
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE_4001","가게가 없습니다."),
+
     DUPLICATE_CHALLENGE(HttpStatus.BAD_REQUEST, "MISSION4001", "이미 해당 미션에 도전 중입니다");
 
     private final HttpStatus httpStatus;
