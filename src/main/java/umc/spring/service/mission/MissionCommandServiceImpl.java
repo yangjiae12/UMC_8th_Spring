@@ -1,6 +1,9 @@
 package umc.spring.service.mission;
 
+import ch.qos.logback.core.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.spring.converter.MissionConverter;
@@ -25,5 +28,12 @@ public class MissionCommandServiceImpl implements MissionCommandService {
 
         Mission mission = MissionConverter.toMission(request, store);
         return missionRepository.save(mission);
+    }
+
+    @Override
+    public Page<Mission> getMissionsByStore(Long storeId, Integer page) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("Store 값이 없습니다."));
+        return missionRepository.findAllByStore(store, PageRequest.of(page - 1, 10));
     }
 }
