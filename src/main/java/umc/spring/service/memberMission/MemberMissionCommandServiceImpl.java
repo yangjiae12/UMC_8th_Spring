@@ -1,11 +1,14 @@
 package umc.spring.service.memberMission;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.spring.converter.MemberMissionConverter;
 import umc.spring.domain.Member;
 import umc.spring.domain.Mission;
+import umc.spring.domain.enums.MissionStatus;
 import umc.spring.domain.mapping.MemberMission;
 import umc.spring.repository.member.MemberRepository;
 import umc.spring.repository.memberMission.MemberMissionRepository;
@@ -31,5 +34,12 @@ public class MemberMissionCommandServiceImpl implements MemberMissionCommandServ
 
         MemberMission memberMission = MemberMissionConverter.toMemberMission(member, mission);
         return memberMissionRepository.save(memberMission);
+    }
+
+    @Override
+    public Page<MemberMission> getInProgressMissionsByMember(Long memberId, Integer page) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+        return memberMissionRepository.findAllByMemberAndStatus(member, MissionStatus.CHALLENGING, PageRequest.of(page - 1, 10));
     }
 }

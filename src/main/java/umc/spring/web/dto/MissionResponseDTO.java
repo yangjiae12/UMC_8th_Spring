@@ -43,4 +43,28 @@ public class MissionResponseDTO {
         private Boolean isLast;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InProgressMissionDTO {
+        private String missionSpec;
+        private LocalDate deadline;
+        private Integer reward;
+        private String storeName;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InProgressMissionListDTO {
+        private List<InProgressMissionDTO> missionList;
+        private Integer listSize;
+        private Integer totalPage;
+        private Integer totalElements;
+        private Boolean isFirst;
+        private Boolean isLast;
+    }
+
 }
