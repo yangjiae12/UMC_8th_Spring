@@ -8,4 +8,6 @@ public interface MemberMissionCommandService {
     MemberMission challengeMission(MemberMissionRequestDTO.CreateMemberMission request);
 
     Page<MemberMission> getInProgressMissionsByMember(Long memberId, Integer page);
+
+    void completeMission(Long memberMissionId);
 }
