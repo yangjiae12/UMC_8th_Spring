@@ -3,6 +3,7 @@ package umc.spring.converter;
 import org.springframework.data.domain.Page;
 import umc.spring.domain.Mission;
 import umc.spring.domain.Store;
+import umc.spring.domain.mapping.MemberMission;
 import umc.spring.web.dto.MissionRequestDTO;
 import umc.spring.web.dto.MissionResponseDTO;
 
@@ -50,4 +51,29 @@ public class MissionConverter {
                 .isLast(missions.isLast())
                 .build();
     }
+
+    public static MissionResponseDTO.InProgressMissionDTO toInProgressMissionDTO(MemberMission mm) {
+        return MissionResponseDTO.InProgressMissionDTO.builder()
+                .missionSpec(mm.getMission().getMissionSpec())
+                .deadline(mm.getMission().getDeadline())
+                .reward(mm.getMission().getReward())
+                .storeName(mm.getMission().getStore().getName())
+                .build();
+    }
+
+    public static MissionResponseDTO.InProgressMissionListDTO toInProgressMissionListDTO(Page<MemberMission> memberMissions) {
+        List<MissionResponseDTO.InProgressMissionDTO> list = memberMissions.stream()
+                .map(MissionConverter::toInProgressMissionDTO)
+                .collect(Collectors.toList());
+
+        return MissionResponseDTO.InProgressMissionListDTO.builder()
+                .missionList(list)
+                .listSize(list.size())
+                .totalPage(memberMissions.getTotalPages())
+                .totalElements((int) memberMissions.getTotalElements())
+                .isFirst(memberMissions.isFirst())
+                .isLast(memberMissions.isLast())
+                .build();
+    }
+
 }
