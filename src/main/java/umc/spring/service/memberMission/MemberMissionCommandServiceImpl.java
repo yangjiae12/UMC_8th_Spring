@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.spring.apiPayload.code.status.ErrorStatus;
+import umc.spring.apiPayload.exception.GeneralException;
 import umc.spring.converter.MemberMissionConverter;
 import umc.spring.domain.Member;
 import umc.spring.domain.Mission;
@@ -41,5 +43,18 @@ public class MemberMissionCommandServiceImpl implements MemberMissionCommandServ
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
         return memberMissionRepository.findAllByMemberAndStatus(member, MissionStatus.CHALLENGING, PageRequest.of(page - 1, 10));
+    }
+
+    @Override
+    @Transactional
+    public void completeMission(Long memberMissionId) {
+        MemberMission memberMission = memberMissionRepository.findById(memberMissionId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_MISSION_NOT_FOUND));
+
+        if (memberMission.getStatus() != MissionStatus.CHALLENGING) {
+            throw new GeneralException(ErrorStatus.MEMBER_MISSION_ALREADY_COMPLETED);
+        }
+
+        memberMission.changeStatus(MissionStatus.COMPLETED);
     }
 }

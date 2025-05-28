@@ -53,4 +53,19 @@ public class MemberMissionRestController {
         Page<MemberMission> missions = memberMissionCommandService.getInProgressMissionsByMember(memberId, page);
         return umc.spring.apiPayload.ApiResponse.onSuccess(MissionConverter.toInProgressMissionListDTO(missions));
     }
+
+    @PatchMapping("/members/{memberMissionId}/complete")
+    @Operation(summary = "미션 완료 처리 API", description = "진행 중인 미션을 완료 상태로 변경합니다. CHALLENGING 상태일 때만 변경 가능.")
+    @Parameter(name = "memberMissionId", in = ParameterIn.PATH, description = "멤버 미션 ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @ApiResponse(responseCode = "MISSION404", description = "해당 멤버 미션이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = umc.spring.apiPayload.ApiResponse.class))),
+            @ApiResponse(responseCode = "MISSION409", description = "이미 완료된 미션입니다.", content = @Content(schema = @Schema(implementation = umc.spring.apiPayload.ApiResponse.class)))
+    })
+    public umc.spring.apiPayload.ApiResponse<Void> completeMission(
+            @PathVariable(name = "memberMissionId") Long memberMissionId) {
+
+        memberMissionCommandService.completeMission(memberMissionId);
+        return umc.spring.apiPayload.ApiResponse.onSuccess(null);
+    }
 }
