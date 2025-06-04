@@ -26,4 +26,14 @@ public class MemberResponseDTO {
         Long memberId;
         String accessToken;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberInfoDTO{
+        String name;
+        String email;
+        String gender;
+    }
 }
